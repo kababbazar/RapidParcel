@@ -9,54 +9,74 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Mandatory Dark Background for Hard Fallback */
     body {
       margin: 0;
       padding: 0;
-      background-color: #111827; /* Dark background */
+      background-color: #0f172a;
       color: white;
       font-family: 'Inter', 'Hind Siliguri', sans-serif;
     }
-    #root {
-      min-height: 100vh;
-    }
-    #fallback-loader {
+
+    /* Hard Fallback Styling - Visible until React successfully hides it */
+    #hard-fallback {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background-color: #0f172a;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      width: 100vw;
-      background-color: #111827;
-      color: #f59e0b;
-      font-family: sans-serif;
       text-align: center;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 9999;
     }
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #1f2937;
-      border-top: 5px solid #f59e0b;
+    
+    #hard-fallback h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #f59e0b;
+      margin: 0;
+      letter-spacing: -1px;
+    }
+    
+    #hard-fallback p {
+      font-size: 18px;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    .loader-spin {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #1e293b;
+      border-top: 4px solid #f59e0b;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
       margin-bottom: 20px;
+      animation: spin 1s linear infinite;
     }
+
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      to { transform: rotate(360deg); }
     }
+
+    /* Hide hard fallback once React is running and body has .app-loaded class */
+    body.app-loaded #hard-fallback {
+      display: none !important;
+    }
+
+    /* Standard App Styles */
+    .bg-gray-50 { background-color: #f9fafb; }
+    .text-gray-900 { color: #111827; }
+
     @media print {
       .no-print { display: none !important; }
       .print-only { display: block !important; }
-      body { background: white; color: black; }
+      body { background: white !important; color: black !important; }
+      #hard-fallback { display: none !important; }
     }
-    .print-only { display: none; }
   </style>
   <script>
-    // Critical: Initialize process.env for production safety
+    // Critical: Initialize environment shims before any module script loads
     window.process = { env: { API_KEY: "" } };
     window.global = window;
   </script>
@@ -71,19 +91,24 @@
     "recharts": "https://esm.sh/recharts@2.13.3",
     "framer-motion": "https://esm.sh/framer-motion@11.11.17",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/"
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "vite": "https://esm.sh/vite@^7.3.1"
   }
 }
 </script>
 </head>
-<body class="bg-gray-50 text-gray-900">
-  <div id="root">
-    <div id="fallback-loader">
-      <div class="spinner"></div>
-      <h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Rapid Parcel Loading...</h1>
-      <p style="opacity: 0.6; margin-top: 10px;">Initializing secure logistics engine</p>
-    </div>
+<body>
+  <!-- GUARANTEED VISIBLE CONTENT WITHOUT JS -->
+  <div id="hard-fallback">
+    <div class="loader-spin"></div>
+    <h1>Rapid Parcel</h1>
+    <p>System Loaded</p>
   </div>
+
+  <!-- React Mount Root -->
+  <div id="root"></div>
+
+  <!-- Entry Point -->
   <script type="module" src="index.tsx"></script>
 </body>
 </html>
