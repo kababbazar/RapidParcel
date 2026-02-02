@@ -1,17 +1,15 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { Area } from "../types";
-
-// Always use the recommended initialization pattern for GoogleGenAI
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const detectAreaFromAddress = async (address: string, areas: Area[]): Promise<string | null> => {
   if (!address || areas.length === 0) return null;
 
   try {
+    // Initialize inside the function to ensure process.env.API_KEY is captured correctly
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+    
     const areaListString = areas.map(a => `${a.areaName} (${a.district}) - ID: ${a.id}`).join(', ');
     
-    // Using gemini-3-flash-preview for text classification tasks
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `Given the customer address: "${address}". 
@@ -24,8 +22,7 @@ export const detectAreaFromAddress = async (address: string, areas: Area[]): Pro
       }
     });
 
-    // Access response.text directly as a property
-    const result = response.text.trim();
+    const result = response.text?.trim() || "NONE";
     return result === "NONE" ? null : result;
   } catch (error) {
     console.error("AI Area Detection Error:", error);
