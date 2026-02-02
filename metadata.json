@@ -1,0 +1,8 @@
+{
+  "name": "Rapid Parcel",
+  "description": "A professional logistics management system for courier businesses with AI-powered area detection, merchant management, and POS invoice generation.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
