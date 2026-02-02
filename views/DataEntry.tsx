@@ -151,7 +151,12 @@ export const DataEntry: React.FC<Props> = ({ state, updateState, onPrint }) => {
             <div className="space-y-1">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 Delivery Area * 
-                {formData.isAiDetected ? <BrainCircuit size={14} title="AI Detected" className="text-blue-500" /> : formData.areaId ? <PenLine size={14} title="Manual Entry" className="text-orange-500" /> : null}
+                {/* Fixed: Lucide icons do not accept a 'title' prop directly; wrapped in span with title instead */}
+                {formData.isAiDetected ? (
+                  <span title="AI Detected"><BrainCircuit size={14} className="text-blue-500" /></span>
+                ) : formData.areaId ? (
+                  <span title="Manual Entry"><PenLine size={14} className="text-orange-500" /></span>
+                ) : null}
               </label>
               <select 
                 required 
