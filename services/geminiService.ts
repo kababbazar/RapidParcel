@@ -1,13 +1,13 @@
-import { GoogleGenAI } from "@google/genai";
+
+import { GoogleGenAI, Type } from "@google/genai";
 import { Area } from "../types";
+
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 export const detectAreaFromAddress = async (address: string, areas: Area[]): Promise<string | null> => {
   if (!address || areas.length === 0) return null;
 
   try {
-    // Initialize inside the function to ensure process.env.API_KEY is captured correctly
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
-    
     const areaListString = areas.map(a => `${a.areaName} (${a.district}) - ID: ${a.id}`).join(', ');
     
     const response = await ai.models.generateContent({
@@ -22,7 +22,7 @@ export const detectAreaFromAddress = async (address: string, areas: Area[]): Pro
       }
     });
 
-    const result = response.text?.trim() || "NONE";
+    const result = response.text.trim();
     return result === "NONE" ? null : result;
   } catch (error) {
     console.error("AI Area Detection Error:", error);
