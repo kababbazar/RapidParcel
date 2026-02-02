@@ -10,46 +10,53 @@
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Inter', 'Hind Siliguri', sans-serif;
       margin: 0;
+      padding: 0;
       background-color: #111827; /* Dark background */
       color: white;
+      font-family: 'Inter', 'Hind Siliguri', sans-serif;
     }
-    #root:empty {
+    #root {
+      min-height: 100vh;
+    }
+    #fallback-loader {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      text-align: center;
-    }
-    #root:empty::before {
-      content: "";
-      width: 64px;
-      height: 64px;
-      border: 5px solid #f59e0b;
-      border-top-color: transparent;
-      border-radius: 50%;
-      margin-bottom: 20px;
-      animation: spin 1s linear infinite;
-    }
-    #root:empty::after {
-      content: "Rapid Parcel Loading... (System Check)";
-      font-weight: bold;
-      font-size: 1.5rem;
+      width: 100vw;
+      background-color: #111827;
       color: #f59e0b;
+      font-family: sans-serif;
+      text-align: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #1f2937;
+      border-top: 5px solid #f59e0b;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
     }
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     @media print {
       .no-print { display: none !important; }
       .print-only { display: block !important; }
-      body { margin: 0; padding: 0; background: white; color: black; }
+      body { background: white; color: black; }
     }
     .print-only { display: none; }
   </style>
   <script>
+    // Critical: Initialize process.env for production safety
     window.process = { env: { API_KEY: "" } };
     window.global = window;
   </script>
@@ -70,7 +77,13 @@
 </script>
 </head>
 <body class="bg-gray-50 text-gray-900">
-  <div id="root"></div>
+  <div id="root">
+    <div id="fallback-loader">
+      <div class="spinner"></div>
+      <h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Rapid Parcel Loading...</h1>
+      <p style="opacity: 0.6; margin-top: 10px;">Initializing secure logistics engine</p>
+    </div>
+  </div>
   <script type="module" src="index.tsx"></script>
 </body>
 </html>

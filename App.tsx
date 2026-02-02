@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { AppState, View, SiteType, ParcelEntry } from './types';
+import { AppState, View, SiteType } from './types';
 import { Layout } from './components/Layout';
 import { Dashboard } from './views/Dashboard';
 import { MerchantEntry } from './views/MerchantEntry';
@@ -26,14 +25,32 @@ const App: React.FC = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [view, setView] = useState<View>('dashboard');
   const [state, setState] = useState<AppState>(() => {
-    const saved = localStorage.getItem('rapid_parcel_v1');
-    return saved ? JSON.parse(saved) : INITIAL_STATE;
+    try {
+      const saved = localStorage.getItem('rapid_parcel_v1');
+      if (!saved) return INITIAL_STATE;
+      const parsed = JSON.parse(saved);
+      // Basic validation to ensure areas and merchants arrays exist
+      return {
+        ...INITIAL_STATE,
+        ...parsed,
+        merchants: Array.isArray(parsed.merchants) ? parsed.merchants : [],
+        areas: Array.isArray(parsed.areas) ? parsed.areas : INITIAL_STATE.areas,
+        entries: Array.isArray(parsed.entries) ? parsed.entries : []
+      };
+    } catch (e) {
+      console.warn("Storage recovery failed, resetting to initial state", e);
+      return INITIAL_STATE;
+    }
   });
 
   const [printModal, setPrintModal] = useState<{ parcelId: string; type: 'POS' | '8x5'; posSize?: string } | null>(null);
 
   useEffect(() => {
-    localStorage.setItem('rapid_parcel_v1', JSON.stringify(state));
+    try {
+      localStorage.setItem('rapid_parcel_v1', JSON.stringify(state));
+    } catch (e) {
+      console.error("Storage write failed", e);
+    }
   }, [state]);
 
   const updateState = (update: Partial<AppState>) => {
@@ -61,7 +78,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <div className="no-print">
+      <div className="no-print bg-gray-50 text-gray-900 min-h-screen">
         <Layout currentView={view} setView={setView}>
           {renderView()}
         </Layout>
